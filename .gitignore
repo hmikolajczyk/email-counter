@@ -1,0 +1,15 @@
+# Foldery kompilacji
+bin/
+obj/
+
+# Ustawienia VS Code
+.vscode/
+
+# Pliki użytkownika Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docuser
+
+# Logi i pliki tymczasowe
+*.log
