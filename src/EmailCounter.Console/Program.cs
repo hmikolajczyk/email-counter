@@ -46,6 +46,38 @@ namespace EmailCounter.ConsoleApp
                     count=service.GetMessageCount(folderName,startDate,endDate);
 
                     Console.WriteLine($"Liczba maili w folderze '{folderName}': {count}");
+
+                    string generateFiles="?";
+                    do
+                    {
+                        Console.Write($"Generować '{folderName}.csv' (t/n): ");
+                        generateFiles=Console.ReadLine()??"";
+                        generateFiles=generateFiles.ToLower();
+                        if (generateFiles == "t")
+                        {
+                            List<EmailData> emailsToExport = service.GetEmailsForExport(folderName, startDate, endDate);
+
+                            if (emailsToExport.Count > 0)
+                            {
+                                var csvService = new CsvExportService();
+                                string pwd = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                                string fileName = folderName+".csv";
+                                string fullPath = Path.Combine(pwd, fileName);
+
+                                csvService.ExportEmails(emailsToExport, fullPath);
+                                
+                                Console.WriteLine($"Sukces! Raport zapisany na pulpicie: {fullPath}");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Brak maili do eksportu w podanym zakresie.");
+                            }
+                        } else if (generateFiles != "n")
+                        {
+                            Console.WriteLine("BŁĄD: Zła opcja.");
+                        }
+                    } while(generateFiles!="t"&generateFiles!="n");
+                    break;
                 }
                 else if(folderName!="exit")
                 {

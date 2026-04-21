@@ -36,9 +36,10 @@ namespace EmailCounter.ConsoleApp
             return -1;
         }
 
-        public List<string> GetLatestEmailSubjects(string folderName, int count)
+        public List<EmailData> GetEmailsForExport(string folderName, DateTime startDate, DateTime endDate)
         {
-            var subjects = new List<string>();
+            var results = new List<EmailData>();
+            string filter =$"[ReceivedTime]>='{startDate:g}' AND [ReceivedTime]<='{endDate:g}'";
 
             foreach (Outlook.MAPIFolder rootFolder in _ns.Folders)
             {
@@ -46,28 +47,27 @@ namespace EmailCounter.ConsoleApp
                 {
                     if (subFolder.Name.Equals(folderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        // Pobieramy elementy i sortujemy je od najnowszych
-                        Outlook.Items items = subFolder.Items;
-                        items.Sort("[ReceivedTime]", true); // true = malejąco
-
-                        int totalItems = items.Count;
-                        // Wyciągamy tematy (zabezpieczając się przed małą liczbą maili)
-                        for (int i = 1; i <= Math.Min(count, totalItems); i++)
+                        Outlook.Items items = subFolder.Items.Restrict(filter);
+                        foreach (object item in items)
                         {
-                            // Sprawdzamy, czy to na pewno jest mail (a nie np. zaproszenie)
-                            if (items[i] is Outlook.MailItem mail)
+                            if (item is Outlook.MailItem mail)
                             {
-                                string dateInfo = mail.ReceivedTime.ToString("g");
-                                subjects.Add($"[{dateInfo}] {mail.Subject}");
+                                results.Add(new EmailData
+                                {
+                                    Subject = mail.Subject,
+                                    ReceivedTime = mail.ReceivedTime,
+                                    Sender = mail.SenderName,
+                                    ConversationID = mail.ConversationID,
+                                    ConversationTopic = mail.ConversationTopic
+                                });
                             }
                         }
-                        return subjects;
+                        return results;
                     }
                 }
             }
-            return subjects;
+            return results;
         }
-
         public void Logout()
         {
             _ns.Logoff();
