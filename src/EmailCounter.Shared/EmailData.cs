@@ -1,4 +1,4 @@
-namespace EmailCounter.ConsoleApp
+namespace EmailCounter.Shared
 {
     public class EmailData
     {

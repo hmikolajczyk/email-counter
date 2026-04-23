@@ -1,5 +1,6 @@
 using System;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using EmailCounter.Shared;
 
 namespace EmailCounter.ConsoleApp
 {

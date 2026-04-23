@@ -1,4 +1,5 @@
 ﻿using System;
+using EmailCounter.Shared;
 
 namespace EmailCounter.ConsoleApp
 {
