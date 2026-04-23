@@ -3,18 +3,40 @@
         xmlns:vm="using:EmailCounter.Gui.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EmailCounter.Gui.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="EmailCounter.Gui">
+        Title="Email Counter App"
+        Width="400"
+        Height="400"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+<Border Grid.Column="0" Padding="15">
+    <StackPanel Spacing="10">
+        <Border BorderBrush="Gray" BorderThickness="1" Height="150" Padding="10" CornerRadius="5">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Data od:" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                <DatePicker HorizontalAlignment="Center"/>
+                <TextBlock Text="Data do:" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                <DatePicker HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+        <Border BorderBrush="Gray" BorderThickness="1" Height="210" Padding="10" CornerRadius="5">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Wybierz folder: " HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                <ScrollViewer Height="160" BorderBrush="gray" BorderThickness="1" CornerRadius="2">
+                    <TreeView x:Name="FoldersTreeView" ItemsSource="{Binding Folders}">
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate ItemsSource="{Binding SubFolders}">
+                                <TextBlock Text="{Binding FolderName}"/>    
+                            </TreeDataTemplate>    
+                        </TreeView.ItemTemplate>    
+                    </TreeView>
+                </ScrollViewer>
+            </StackPanel>    
+        </Border>
+    </StackPanel>
+</Border>
 </Window>
