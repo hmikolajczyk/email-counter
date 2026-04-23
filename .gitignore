@@ -1,6 +1,17 @@
 # Foldery kompilacji
 bin/
 obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docuser
+.vs/
+
+# Avalonia
+.avalonia/
+
+# macOS
+.DS_Store
 
 # Ustawienia VS Code
 .vscode/
@@ -13,3 +24,4 @@ obj/
 
 # Logi i pliki tymczasowe
 *.log
+*.tmp
