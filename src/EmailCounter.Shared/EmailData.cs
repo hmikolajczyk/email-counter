@@ -1,4 +1,4 @@
-namespace EmailCounter.Shared
+namespace EmailCounter.Shared.Models
 {
     public class EmailData
     {

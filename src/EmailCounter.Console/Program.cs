@@ -1,5 +1,6 @@
 ﻿using System;
-using EmailCounter.Shared;
+using EmailCounter.Shared.Services;
+using EmailCounter.Shared.Models;
 
 namespace EmailCounter.ConsoleApp
 {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using EmailCounter.Shared;
+using EmailCounter.Shared.Models;
 
-namespace EmailCounter.ConsoleApp
+namespace EmailCounter.Shared.Services
 {
     public class CsvExportService
     {
