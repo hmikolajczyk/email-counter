@@ -9,7 +9,7 @@ namespace EmailCounter.Shared.Services
     {
         public void ExportEmails(List<EmailData> emails, string filePath)
         {
-            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
+            using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
             {
                 writer.WriteLine("Temat;Data Otrzymania;Nadawca;ID Konwersacji;Temat Konwersacji");
 

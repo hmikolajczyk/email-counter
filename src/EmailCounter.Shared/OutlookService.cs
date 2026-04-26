@@ -38,7 +38,7 @@ namespace EmailCounter.Shared.Services
                 {
                     folders.Add(MapFolder(root));
                 }
-            } catch { /* Ignoruj błędy pojedynczych folderów */ }
+            } catch {}
             
             return folders;
         }
@@ -46,36 +46,73 @@ namespace EmailCounter.Shared.Services
         public List<EmailData> GetEmailsForExport(string folderName, DateTime startDate, DateTime endDate)
         {
             var results = new List<EmailData>();
-            string filter =$"[ReceivedTime]>='{startDate:g}' AND [ReceivedTime]<='{endDate:g}'";
+            string filter = $"[ReceivedTime] >= '{startDate:dd/MM/yyyy HH:mm}' AND [ReceivedTime] <= '{endDate:dd/MM/yyyy HH:mm}'";
 
-            foreach (Outlook.MAPIFolder rootFolder in _ns!.Folders)
+            try
             {
-                foreach (Outlook.MAPIFolder subFolder in rootFolder.Folders)
+                dynamic? targetFolder = null;
+
+                if (folderName.Contains("\\")) 
                 {
-                    if (subFolder.Name.Equals(folderName, StringComparison.OrdinalIgnoreCase))
+                    targetFolder = GetFolderByPath(folderName);
+                }
+                else 
+                {
+                    foreach (Outlook.MAPIFolder rootFolder in _ns!.Folders)
                     {
-                        Outlook.Items items = subFolder.Items.Restrict(filter);
-                        foreach (object item in items)
+                        foreach (Outlook.MAPIFolder subFolder in rootFolder.Folders)
                         {
-                            if (item is Outlook.MailItem mail)
+                            if (subFolder.Name.Equals(folderName, StringComparison.OrdinalIgnoreCase))
                             {
-                                results.Add(new EmailData
-                                {
-                                    Subject = mail.Subject,
-                                    ReceivedTime = mail.ReceivedTime,
-                                    Sender = mail.SenderName,
-                                    ConversationID = mail.ConversationID,
-                                    ConversationTopic = mail.ConversationTopic
-                                });
+                                targetFolder = subFolder;
+                                break;
                             }
                         }
-                        return results;
+                        if (targetFolder != null) break;
                     }
                 }
+
+                if (targetFolder != null)
+                {
+                    dynamic items = targetFolder.Items.Restrict(filter);
+                    foreach (var item in items)
+                    {
+                        if (item is Outlook.MailItem mail)
+                        {
+                            results.Add(new EmailData {
+                                Subject = mail.Subject,
+                                ReceivedTime = mail.ReceivedTime,
+                                Sender = mail.SenderName,
+                                ConversationID = mail.ConversationID,
+                                ConversationTopic = mail.ConversationTopic
+                            });
+                        }
+                    }
+                }
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd podczas pobierania maili: {ex.Message}");
             }
-            return results;
+            return results; 
         }
         
+        private dynamic? GetFolderByPath(string fullPath)
+        {
+            string path = fullPath.TrimStart('\\');
+            string[] parts = path.Split('\\');
+
+            try
+            {
+                dynamic folder = _ns!.Folders[parts[0]];
+                for (int i = 1; i < parts.Length; i++)
+                {
+                    folder = folder.Folders[parts[i]];
+                }
+                return folder;
+            }
+            catch { return null; }
+        }
         public int GetMessageCount(string folderName, DateTime? startDate=null, DateTime? endDate=null)
         {
             foreach (Outlook.MAPIFolder rootFolder in _ns!.Folders)

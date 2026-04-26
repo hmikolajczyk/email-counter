@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
 
 namespace EmailCounter.Gui.ViewModels;
 
-public abstract class ViewModelBase : ObservableObject
+public class ViewModelBase : ReactiveObject
 {
 }
