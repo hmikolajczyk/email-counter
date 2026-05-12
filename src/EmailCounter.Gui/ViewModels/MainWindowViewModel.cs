@@ -6,15 +6,15 @@ using EmailCounter.Shared.Services;
 using ReactiveUI;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace EmailCounter.Gui.ViewModels;
-
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly OutlookService _outlookService = new();
     private readonly CsvExportService _csvService = new();
-    private DateTimeOffset _startDate = DateTimeOffset.Now.AddDays(-7).Date.AddTicks(+1);
-    public DateTimeOffset StartDate 
+    private DateTimeOffset _startDate;
+    public DateTimeOffset StartDate
     { 
         get => _startDate; 
         set {
@@ -22,7 +22,7 @@ public class MainWindowViewModel : ViewModelBase
             ResetStatus();
         }
     }
-    private DateTimeOffset _endDate = DateTimeOffset.Now.Date.AddDays(1).AddTicks(-1);
+    private DateTimeOffset _endDate;
     public DateTimeOffset EndDate 
     { 
         get => _endDate; 
@@ -114,6 +114,9 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        DateTimeOffset currentDate = DateTimeOffset.Now;
+        StartDate = new DateTimeOffset(currentDate.Year, currentDate.Month, 1, 0, 0, 0, currentDate.Offset).AddMonths(-1);
+        EndDate = StartDate.AddMonths(1).AddTicks(-1);
         LoadOutlookFolders();
     }
 
