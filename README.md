@@ -29,9 +29,30 @@ cd email-counter\src\EmailCounter.Gui
 dotnet build
 dotnet run
 ```
+### Using the GUI
+The app may take several seconds to open as it establishes a connection with Outlook services.
+
+**1. Date Selection:** Upon startup, the app automatically sets the date range to the previous full month. You can adjust the Start Date *(Data od)* and End Date *(Data do)* manually.
+![App after the startup](screenshots/startup.png)
+
+**2. Folder selection:** Select the desired Outlook folder from the tree menu.
+![Picking the folder](screenshots/pick-folder.png)
+
+**3. Generating Report:** Click the "Generuj raport" button. A `.csv` file will be generated and saved directly to your Desktop.
+>[!WARNING] Opening the report in Excel
+>Avoid opening the .csv file by double-clicking it, as it may cause formatting and encoding issues (especially with Polish characters).
+>To view the data correctly in Excel:
+>1. Open a new Excel spreadsheet.
+>2. Go to **`Data>From Text/CSV`**:
+>![Importing the data](screenshots/excel.png)
+>3. In the import window, ensure you select the following settings:
+>![Selecting the correct encoding](screenshots/import-settings.png)
+
+
 ## 🚧 Current Status
 - [x] - Working GUI
 - [x] - Working .csv exports
+- [ ] - Enhanced status bar notifications and error reporting
 - [ ] - **Soon:** Stable v1.0.0 release with standalone binaries
 ## ⚖️ License
 Distributed under the MIT License. This software is provided "as is", without warranty of any kind. See `MIT license` for more information.

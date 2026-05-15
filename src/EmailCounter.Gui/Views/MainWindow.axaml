@@ -6,7 +6,7 @@
         x:Class="EmailCounter.Gui.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/email-counter-app-logo.ico"
-        Title="Email Counter App"
+        Title="Email Counter"
         Width="400"
         Height="500"
         WindowStartupLocation="CenterScreen"
