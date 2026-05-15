@@ -6,7 +6,7 @@ using EmailCounter.Shared.Services;
 using ReactiveUI;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
+//using Microsoft.VisualBasic;
 
 namespace EmailCounter.Gui.ViewModels;
 public class MainWindowViewModel : ViewModelBase
@@ -53,6 +53,11 @@ public class MainWindowViewModel : ViewModelBase
     { 
         get => _statusColor; 
         set => this.RaiseAndSetIfChanged(ref _statusColor, value); 
+    }
+
+    public void CloseOutlook()
+    {
+        _outlookService.TerminateBackgroundOutlookProces();
     }
     public async void GenerateReportCommand()
     {
@@ -146,8 +151,7 @@ public class MainWindowViewModel : ViewModelBase
         Folders.Clear();
         try
         {
-            var service = new OutlookService();
-            var realFolders = service.GetFolders();
+            var realFolders = _outlookService.GetFolders(); 
 
             if (realFolders.Count > 0)
             {
@@ -156,7 +160,7 @@ public class MainWindowViewModel : ViewModelBase
             else
             {
                 LoadMockFolders();
-                Folders.Add(new OutlookFolder { FolderName = "Nie znaleziono folderów Outlooka - używam Mocków" });
+                Folders.Add(new OutlookFolder { FolderName = "Nie znaleziono folderów Outlooka" });
             }
         }
         catch (Exception ex)

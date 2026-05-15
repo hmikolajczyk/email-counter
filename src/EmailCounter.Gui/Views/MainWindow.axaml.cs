@@ -19,4 +19,14 @@ public partial class MainWindow : Window
             }
         };
     }
+
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.CloseOutlook();
+        }
+
+        base.OnClosing(e);
+    }
 }
