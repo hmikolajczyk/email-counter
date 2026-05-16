@@ -3,5 +3,6 @@
     <Project Path="src/EmailCounter.Console/EmailCounter.Console.csproj" />
     <Project Path="src/EmailCounter.Gui/EmailCounter.Gui.csproj" />
     <Project Path="src/EmailCounter.Shared/EmailCounter.Shared.csproj" />
+    <Project Path="src/EmailCounter.Tests/EmailCounter.Tests.csproj" />
   </Folder>
 </Solution>

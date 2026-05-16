@@ -25,3 +25,9 @@ obj/
 # Logi i pliki tymczasowe
 *.log
 *.tmp
+
+# Test coverage results
+[Tt]est[Rr]esults/
+*.json
+!appsettings.json
+*.cobertura.xml
