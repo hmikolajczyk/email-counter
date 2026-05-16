@@ -1,4 +1,4 @@
-# 📧 Email Counter App
+# <img src="src/EmailCounter.Gui/Assets/logo.png" width="40" align="top"> Email Counter App
 A desktop application for real-time email tracking.
 ## 📖 Overview
 The **Email Counter App** is a lightweight utility designed to help users monitor the number of emails in desired folder. It also allows generating .csv reports which include the most important details of the emails.
