@@ -45,7 +45,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _selectedFolder, value);
             ResetStatus();
-            //if (value != null) StatusMessage = $"Wybrano: {value.FolderName}";
+            if (value != null)
+            {
+                StatusMessage = $"Wybrano: {value.FolderName}";
+                StatusColor = "SteelBlue";
+            }
         }
     }
     private string _statusColor = "Gray";
@@ -82,7 +86,7 @@ public class MainWindowViewModel : ViewModelBase
             if (emailsToExport.Count > 0)
             {
                 StatusMessage = "Generowanie...";
-                StatusColor = "Blue";
+                StatusColor = "SteelBlue";
                 await Task.Delay(100);
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 string fileName = $"{SelectedFolder.FolderName}.csv";
@@ -90,7 +94,7 @@ public class MainWindowViewModel : ViewModelBase
 
                 _csvService.ExportEmails(emailsToExport, fullPath);
 
-                StatusMessage = "Sukces! Raport zapisano na pulpicie.";
+                StatusMessage = $"Wyeksportowano {emailsToExport.Count} wiadomości. Raport zapisano na pulpicie.";
                 StatusColor = "Green";
                 await Task.Delay(100);
                 System.Diagnostics.Debug.WriteLine($"Zapisano w: {fullPath}");
@@ -112,7 +116,7 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void ResetStatus()
     {
-        StatusMessage = "Przetwarzanie informacji (generuj raport).";
+        StatusMessage = "";
         StatusColor = "Gray";
     }
     public ObservableCollection<OutlookFolder> Folders { get; } = new();
@@ -123,27 +127,6 @@ public class MainWindowViewModel : ViewModelBase
         StartDate = new DateTimeOffset(currentDate.Year, currentDate.Month, 1, 0, 0, 0, currentDate.Offset).AddMonths(-1);
         EndDate = StartDate.AddMonths(1).AddTicks(-1);
         LoadOutlookFolders();
-    }
-
-    private void LoadMockFolders()
-    {
-        Folders.Clear();
-        
-        var root = new OutlookFolder 
-        { 
-            FolderName = "twoje.imię@outlook.com",
-            SubFolders = new List<OutlookFolder>
-            {
-                new OutlookFolder { FolderName = "Skrzynka odbiorcza", SubFolders = new() {
-                    new OutlookFolder { FolderName = "Praca" },
-                    new OutlookFolder { FolderName = "Prywatne" }
-                }},
-                new OutlookFolder { FolderName = "Elementy wysłane" },
-                new OutlookFolder { FolderName = "Kosz" }
-            }
-        };
-        
-        Folders.Add(root);
     }
 
     private void LoadOutlookFolders()
@@ -159,14 +142,15 @@ public class MainWindowViewModel : ViewModelBase
             }
             else
             {
-                LoadMockFolders();
-                Folders.Add(new OutlookFolder { FolderName = "Nie znaleziono folderów Outlooka" });
+                StatusMessage = "Błąd: Brak Outlooka. Zainstaluj wersję desktopową.";
+                StatusColor = "Red";
             }
         }
         catch (Exception ex)
         {
-            LoadMockFolders();
-            System.Diagnostics.Debug.WriteLine($"Błąd podczas ładowania: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"DEBUG: Outlook Error: {ex.Message}");
+            StatusMessage = "Błąd: Brak Outlooka. Zainstaluj wersję desktopową.";
+            StatusColor = "Red";
         }
     }
 }

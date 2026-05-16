@@ -52,7 +52,8 @@ The app may take several seconds to open as it establishes a connection with Out
 ## 🚧 Current Status
 - [x] - Working GUI
 - [x] - Working .csv exports
-- [ ] - Enhanced status bar notifications and error reporting
+- [x] - Enhanced status bar notifications and error reporting
+- [ ] - Handling edge cases
 - [ ] - **Soon:** Stable v1.0.0 release with standalone binaries
 ## ⚖️ License
 Distributed under the MIT License. This software is provided "as is", without warranty of any kind. See `MIT license` for more information.
