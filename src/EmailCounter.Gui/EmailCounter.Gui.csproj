@@ -29,9 +29,4 @@
   <ItemGroup>
     <ProjectReference Include="..\EmailCounter.Shared\EmailCounter.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="..
-    EmailCounter.Tests" />
-  </ItemGroup>
 </Project>

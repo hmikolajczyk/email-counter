@@ -6,7 +6,7 @@ using EmailCounter.Shared.Services;
 using ReactiveUI;
 using System.IO;
 using System.Threading.Tasks;
-//using Microsoft.VisualBasic;
+using EmailCounter.Shared;
 
 namespace EmailCounter.Gui.ViewModels;
 public class MainWindowViewModel : ViewModelBase
@@ -123,9 +123,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        DateTimeOffset currentDate = DateTimeOffset.Now;
-        StartDate = new DateTimeOffset(currentDate.Year, currentDate.Month, 1, 0, 0, 0, currentDate.Offset).AddMonths(-1);
-        EndDate = StartDate.AddMonths(1).AddTicks(-1);
+        (StartDate, EndDate) = DateHelper.CalculatePreviousMonthRange(DateTimeOffset.Now);
         LoadOutlookFolders();
     }
 
