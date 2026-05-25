@@ -120,7 +120,9 @@ namespace EmailCounter.Shared.Services
         public List<EmailData> GetEmailsForExport(string folderName, DateTime startDate, DateTime endDate)
         {
             var results = new List<EmailData>();
-            string filter = $"[ReceivedTime] >= '{startDate:dd/MM/yyyy HH:mm}' AND [ReceivedTime] <= '{endDate:dd/MM/yyyy HH:mm}'";
+            string startDateStr = DateHelper.FormatDateRange(startDate);
+            string endDateStr = DateHelper.FormatDateRange(endDate);
+            string filter = $"[ReceivedTime] >= '{startDateStr}' AND [ReceivedTime] <= '{endDateStr}'";
             
             dynamic? targetFolder = null;
             dynamic? rootFolders = null;
@@ -261,7 +263,9 @@ namespace EmailCounter.Shared.Services
                                         items = subFolder.Items;
                                         if (startDate.HasValue && endDate.HasValue)
                                         {
-                                            string filter = $"[ReceivedTime]>='{startDate:g}' AND [ReceivedTime]<='{endDate:g}'";
+                                            string startDateStr = DateHelper.FormatDateRange(startDate);
+                                            string endDateStr = DateHelper.FormatDateRange(endDate);
+                                            string filter = $"[ReceivedTime] >= '{startDateStr}' AND [ReceivedTime] <= '{endDateStr}'";
                                             dynamic? filteredItems = null;
                                             try {
                                                 filteredItems = items.Restrict(filter);

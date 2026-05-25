@@ -123,7 +123,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        (StartDate, EndDate) = DateHelper.CalculatePreviousMonthRange(DateTimeOffset.Now);
+        (StartDate, EndDate) = DateHelper.GetPreviousMonthRange(DateTimeOffset.Now);
         LoadOutlookFolders();
     }
 
