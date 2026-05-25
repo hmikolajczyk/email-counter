@@ -57,4 +57,15 @@ public class DateHelperTests
         Assert.Equal(expectedStart, actualStart);
         Assert.Equal(expectedEnd, actualEnd, TimeSpan.FromSeconds(1));
     }
+
+    [Fact]
+    public void FormatDateRange_ShouldReturnFormattedString()
+    {
+        DateTime inputDate = new DateTime(2026, 5, 25, 14, 30, 0);
+        string expectedOutput = "25/05/2026 14:30";
+
+        string actualOutput = DateHelper.FormatDateRange(inputDate);
+
+        Assert.Equal(expectedOutput, actualOutput);
+    }
 }
