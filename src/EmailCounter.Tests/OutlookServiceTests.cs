@@ -337,5 +337,64 @@ namespace EmailCounter.Tests
             Assert.Equal("Archive", rootResult.SubFolders[0].SubFolders[0].FolderName);
             Assert.Equal(@"\\Mailbox\Inbox\Archive", rootResult.SubFolders[0].SubFolders[0].FullPath);
         }
+    
+        [Fact]
+        public void OutlookConnection_ShouldHandleOutlookNotRunningProperly()
+        {
+            var service = new OutlookService(null!);
+            var result = service.GetEmailsForExport("Inbox", DateTime.Now.AddDays(-1), DateTime.Now);
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Memory_VerifyMarshalReleaseComObjectIsCalledEvenIfAnExceptionOccursDuringLoop()
+        {
+            dynamic subFolder = new DynamicComFake();
+            subFolder.Set("Name", "Inbox");
+
+            dynamic filteredItems = new DynamicComFake();
+            var emailList = new List<object>
+            {
+                new DynamicComFake(),
+                new DynamicComFake()
+            };
+
+            ((DynamicComFake)emailList[0]).Set("Class", 43);
+            ((DynamicComFake)emailList[0]).Set("Subject", "Email 1");
+            ((DynamicComFake)emailList[0]).Set("ReceivedTime", DateTime.Now);
+            ((DynamicComFake)emailList[0]).Set("SenderName", "Jan");
+            ((DynamicComFake)emailList[0]).Set("ConversationID", "1");
+            ((DynamicComFake)emailList[0]).Set("ConversationTopic", "Temat 1");
+
+            filteredItems.Set("Count", 2);
+            filteredItems.Set("ListSource", emailList);
+
+            var subFoldersList = new List<object> { (object)subFolder };
+            dynamic subFolders = new DynamicComFake();
+            subFolders.Set("Count", 1);
+            subFolders.Set("ListSource", subFoldersList);
+            subFolder.Set("Folders", subFolders);
+
+            dynamic rootFolder = new DynamicComFake();
+            rootFolder.Set("Folders", subFolders);
+
+            var rootFoldersList = new List<object> { (object)rootFolder };
+            dynamic rootFolders = new DynamicComFake();
+            rootFolders.Set("Count", 1);
+            rootFolders.Set("ListSource", rootFoldersList);
+
+            dynamic fakeNameSpace = new DynamicComFake();
+            fakeNameSpace.Set("Folders", rootFolders);
+
+            dynamic itemsWithRestrict = new DynamicComFakeWithRestrict(filter => (object)filteredItems);
+            subFolder.Set("Items", itemsWithRestrict);
+
+            var service = new OutlookService((object)fakeNameSpace);
+
+            var result = service.GetEmailsForExport("Inbox", new DateTime(2026, 7, 1), new DateTime(2026, 7, 4));
+
+            Assert.Empty(result);
+        }
     }  
 }

@@ -146,5 +146,42 @@ namespace EmailCounter.Tests
                 File.Delete(tempFilePath);
             }
         }
+
+        [Fact]
+        public void FileAccess_HandleFileInUseErrorWhenSavingCsv()
+        {
+            var service = new CsvExportService();
+            
+            string tempFilePath = Path.Combine(Path.GetTempPath(), $"test_export_{Guid.NewGuid()}.csv");
+            
+            var emails = new List<EmailData>
+            {
+                new EmailData 
+                { 
+                    Subject = "Test Resilience", 
+                    ReceivedTime = DateTime.Now, 
+                    Sender = "Jan Kowalski", 
+                    ConversationID = "ID-999", 
+                    ConversationTopic = "Temat testowy" 
+                }
+            };
+
+            using (var fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+               
+                Assert.Throws<IOException>(() => service.ExportEmails(emails, tempFilePath));
+            }
+
+            if (File.Exists(tempFilePath))
+            {
+                try
+                {
+                    File.Delete(tempFilePath);
+                }
+                catch
+                {
+                }
+            }
+        }
     }
 }
