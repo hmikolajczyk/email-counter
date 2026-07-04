@@ -25,6 +25,10 @@ namespace EmailCounter.Shared.Services
                 Console.WriteLine($"Nie udało się połączyć z Outlookiem: {ex.Message}");
             }
         }
+        public OutlookService(object namespaceMock)
+        {
+            _ns = namespaceMock as Microsoft.Office.Interop.Outlook.NameSpace;
+        }
         private void ForceKillOutlookIfBackground()
         {
             try
