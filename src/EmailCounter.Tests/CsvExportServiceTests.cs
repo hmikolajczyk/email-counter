@@ -52,5 +52,38 @@ namespace EmailCounter.Tests
                 File.Delete(tempFilePath);
             }
         }
+
+        [Fact]
+        public void Export_PolishCharactersEncoding_ShouldPreservePolishCharacters()
+        {
+            var service = new CsvExportService();
+            var emails = new List<EmailData>
+            {
+                new EmailData
+                {
+                    Subject = "Chrząszcz brzmi w trzcinie",
+                    ReceivedTime = DateTime.Now,
+                    Sender = "Grzegorz Brzęczyszczykiewicz",
+                    ConversationID = "3423214231",
+                    ConversationTopic = "ęóąśłżźń"
+                }
+            };
+
+            string tempFilePath = Path.GetTempFileName(); 
+
+            service.ExportEmails(emails, tempFilePath);
+
+            string ?dataRow = File.ReadLines(tempFilePath).Skip(1).FirstOrDefault();
+
+            Assert.Contains("Chrząszcz brzmi w trzcinie", dataRow);
+            Assert.Contains("Grzegorz Brzęczyszczykiewicz", dataRow);
+            Assert.Contains("ęóąśłżźń", dataRow);
+
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+
+        }
     }
 }
