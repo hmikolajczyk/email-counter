@@ -2,7 +2,7 @@ namespace EmailCounter.Shared.Models
 {
     public class EmailData
     {
-        public required string Subject { get; set; }
+        public string? Subject { get; set; }
         public DateTime ReceivedTime { get; set; }
         public required string Sender { get; set; }
         public required string ConversationID { get; set; }

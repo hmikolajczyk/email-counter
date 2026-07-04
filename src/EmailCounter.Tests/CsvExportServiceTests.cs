@@ -85,5 +85,33 @@ namespace EmailCounter.Tests
             }
 
         }
+
+        [Fact]
+        public void Export_NullFieldsInEmail_ShouldNotThrowExceptions()
+        {
+            var service = new CsvExportService();
+            var emails = new List<EmailData>
+            {
+                new EmailData
+                {
+                    Subject = null,
+                    ReceivedTime = DateTime.Now,
+                    Sender = "",
+                    ConversationID = "",
+                    ConversationTopic = ""
+                }
+            };
+
+            string tempFilePath = Path.GetTempFileName();
+
+            var exception = Record.Exception(() => service.ExportEmails(emails, tempFilePath));
+
+            Assert.Null(exception);
+
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
     }
 }

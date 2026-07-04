@@ -15,7 +15,7 @@ namespace EmailCounter.Shared.Services
 
                 foreach (var email in emails)
                 {
-                    string row = $"{email.Subject.Replace(";", " ")};"+
+                    string row = $"{(email.Subject ?? "").Replace(";", " ")};"+
                     $"{email.ReceivedTime};" +
                     $"{email.Sender};" +
                     $"{email.ConversationID};" +
