@@ -13,9 +13,14 @@ The **Email Counter App** is a lightweight utility designed to help users monito
 - **Designed for:** Windows 11
 ## 🚀 Getting Started
 ### Prerequisites
-- .NET SDK 8.0
 - Microsoft Outlook (classic)[^1]
-### Installation
+### Installation & Running
+#### Option 1: Quick Start (Recommended for Users)
+1. Go to the [Releases](https://github.com/hmikolajczyk/email-counter/releases) section of this repository.
+2. Download the latest the zipped package from the assets.
+3. Run the executable file. No installation or .NET runtime setup is required!
+#### Option 2: Building from Source (For Developers)
+If you prefer to build the application manually, ensure you have the **.NET SDK 8.0** installed, then follow these steps:
 1. Clone the repository:
 ```sh
 git clone https://github.com/hmikolajczyk/email-counter.git
@@ -60,8 +65,8 @@ The app may take several seconds to open as it establishes a connection with Out
 - [x] - Working GUI
 - [x] - Working .csv exports
 - [x] - Enhanced status bar notifications and error reporting
-- [ ] - Handling edge cases
-- [ ] - **Soon:** Stable v1.0.0 release with standalone binaries
+- [x] - Handling edge cases
+- [x] - Stable v1.0.0 release with standalone binaries
 ## ⚖️ License
 Distributed under the MIT License. This software is provided "as is", without warranty of any kind. See `MIT license` for more information.
 
