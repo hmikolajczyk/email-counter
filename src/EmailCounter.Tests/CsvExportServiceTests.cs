@@ -32,5 +32,25 @@ namespace EmailCounter.Tests
             }
             
         }
+
+        [Fact]
+        public void Export_EmptyList_GeneratesFileWithOnlyHeaderRow()
+        {
+            var service = new CsvExportService();
+            var emails = new List<EmailData>();
+            
+            string tempFilePath = Path.GetTempFileName(); 
+            
+            service.ExportEmails(emails, tempFilePath);
+
+            int lineCount = File.ReadLines(tempFilePath).Count();
+
+            Assert.Equal(1, lineCount);
+
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
     }
 }
