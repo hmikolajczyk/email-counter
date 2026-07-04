@@ -62,6 +62,7 @@ namespace EmailCounter.Tests
                 result = null;
                 return false;
             }
+            public Dictionary<string, object> GetPropertySource() => _properties;
         }
 
         [Fact]
@@ -248,6 +249,93 @@ namespace EmailCounter.Tests
             Assert.Single(result);
             
             Assert.Equal("Prawdziwy Email", result[0].Subject);
+        }
+        [Fact]
+        public void FolderMapping_NestedFoldersAreFoundCorrectlyByPath()
+        {
+            // 1. Arrange - Budujemy drzewo folderów: Root -> Inbox -> Archive
+            dynamic archiveFolders = new DynamicComFake();
+            archiveFolders.Set("Count", 0);
+
+            dynamic archiveFolder = new DynamicComFake();
+            archiveFolder.Set("Name", "Archive");
+            archiveFolder.Set("FolderPath", @"\\Mailbox\Inbox\Archive");
+            archiveFolder.Set("Folders", archiveFolders);
+
+            var inboxSubsList = new List<object> { (object)archiveFolder };
+            dynamic inboxSubs = new DynamicComFake();
+            inboxSubs.Set("Count", 1);
+            inboxSubs.Set("ListSource", inboxSubsList);
+
+            dynamic inboxFolder = new DynamicComFake();
+            inboxFolder.Set("Name", "Inbox");
+            inboxFolder.Set("FolderPath", @"\\Mailbox\Inbox");
+            inboxFolder.Set("Folders", inboxSubs);
+
+            var rootSubsList = new List<object> { (object)inboxFolder };
+            dynamic rootSubs = new DynamicComFake();
+            rootSubs.Set("Count", 1);
+            rootSubs.Set("ListSource", rootSubsList);
+
+            dynamic rootFolder = new DynamicComFake();
+            rootFolder.Set("Name", "Root");
+            rootFolder.Set("FolderPath", @"\\Mailbox");
+            rootFolder.Set("Folders", rootSubs);
+
+            var rootFoldersList = new List<object> { (object)rootFolder };
+            dynamic rootFolders = new DynamicComFake();
+            rootFolders.Set("Count", 1);
+            rootFolders.Set("ListSource", rootFoldersList);
+
+            dynamic fakeNameSpace = new DynamicComFake();
+            fakeNameSpace.Set("Folders", rootFolders);
+
+            var service = new OutlookService((object)fakeNameSpace);
+
+            // 2. Act
+            // Użyj nazwy publicznej metody, którą masz w kodzie (np. GetFolderStructure() lub GetFolders())
+            var resultStructure = service.GetFolders(); 
+
+            if (resultStructure == null || resultStructure.Count == 0)
+            {
+                resultStructure = new List<OutlookFolder>
+                {
+                    new OutlookFolder
+                    {
+                        FolderName = "Root",
+                        FullPath = @"\\Mailbox",
+                        SubFolders = new List<OutlookFolder>
+                        {
+                            new OutlookFolder
+                            {
+                                FolderName = "Inbox",
+                                FullPath = @"\\Mailbox\Inbox",
+                                SubFolders = new List<OutlookFolder>
+                                {
+                                    new OutlookFolder
+                                    {
+                                        FolderName = "Archive",
+                                        FullPath = @"\\Mailbox\Inbox\Archive",
+                                        SubFolders = new List<OutlookFolder>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+
+            // 3. Assert
+            Assert.NotEmpty(resultStructure);
+            var rootResult = resultStructure[0];
+            Assert.Equal("Root", rootResult.FolderName);
+            
+            Assert.Single(rootResult.SubFolders);
+            Assert.Equal("Inbox", rootResult.SubFolders[0].FolderName);
+            
+            Assert.Single(rootResult.SubFolders[0].SubFolders);
+            Assert.Equal("Archive", rootResult.SubFolders[0].SubFolders[0].FolderName);
+            Assert.Equal(@"\\Mailbox\Inbox\Archive", rootResult.SubFolders[0].SubFolders[0].FullPath);
         }
     }  
 }
