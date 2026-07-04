@@ -17,9 +17,9 @@ namespace EmailCounter.Shared.Services
                 {
                     string row = $"{(email.Subject ?? "").Replace(";", " ")};"+
                     $"{email.ReceivedTime};" +
-                    $"{email.Sender};" +
-                    $"{email.ConversationID};" +
-                    $"{email.ConversationTopic};";
+                    $"{email.Sender.Replace(";", " ")};" +
+                    $"{email.ConversationID.Replace(";", " ")};" +
+                    $"{email.ConversationTopic.Replace(";", " ")};";
                     writer.WriteLine(row);
                 }
             }

@@ -113,5 +113,38 @@ namespace EmailCounter.Tests
                 File.Delete(tempFilePath);
             }
         }
+
+        [Fact]
+        public void Export_FieldsContainSemicolons_ShouldReplaceSemicolonsWithSpaces()
+        {
+            var service = new CsvExportService();
+            var emails = new List<EmailData>
+            {
+                new EmailData
+                {
+                    Subject = "Temat;podtemat",
+                    ReceivedTime = DateTime.Now,
+                    Sender = "Nadawca;z;średników",
+                    ConversationID = "ID;konwersacji",
+                    ConversationTopic = "Temat;konwersacji"
+                }
+            };
+
+            string tempFilePath = Path.GetTempFileName();
+
+            service.ExportEmails(emails, tempFilePath);
+
+            string ?dataRow = File.ReadLines(tempFilePath).Skip(1).FirstOrDefault();
+
+            Assert.Contains("Temat podtemat", dataRow);
+            Assert.Contains("Nadawca z średników", dataRow);
+            Assert.Contains("ID konwersacji", dataRow);
+            Assert.Contains("Temat konwersacji", dataRow);
+
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
     }
 }
