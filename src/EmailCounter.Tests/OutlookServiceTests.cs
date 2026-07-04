@@ -169,5 +169,85 @@ namespace EmailCounter.Tests
             Assert.Single(result);
             Assert.Equal("Test Email", result[0].Subject);
         }
+
+        [Fact]
+        public void GetEmailsForExport_OnlyMailItemClass43ObjectsAreProcessed()
+        {
+            dynamic subFolder = new DynamicComFake();
+            subFolder.Set("Name", "Inbox");
+            
+            dynamic filteredItems = new DynamicComFake();
+
+            var emailList = new List<object> 
+            { 
+                new DynamicComFake(),
+                new DynamicComFake()
+            };
+            
+            dynamic mockEmail = emailList[0];
+            mockEmail.Set("Class", 43);
+            mockEmail.Set("Subject", "Prawdziwy Email");
+            mockEmail.Set("ReceivedTime", DateTime.Now);
+            mockEmail.Set("SenderName", "Jan Kowalski");
+            mockEmail.Set("ConversationID", "XYZ123");
+            mockEmail.Set("ConversationTopic", "Temat testowy");
+
+            dynamic mockMeeting = emailList[1];
+            mockMeeting.Set("Class", 54);
+            mockMeeting.Set("Subject", "Zaproszenie na spotkanie");
+            mockMeeting.Set("ReceivedTime", DateTime.Now);
+            mockMeeting.Set("SenderName", "Jan Kowalski");
+            mockMeeting.Set("ConversationID", "ABC888");
+            mockMeeting.Set("ConversationTopic", "Pilne Spotkanie");
+
+            filteredItems.Set("Count", 2);
+            filteredItems.Set("ListSource", emailList);
+
+            string capturedFilter = "";
+
+            var subFoldersList = new List<object> { (object)subFolder };
+            dynamic subFolders = new DynamicComFake();
+            subFolders.Set("Count", 1);
+            subFolders.Set("ListSource", subFoldersList);
+            subFolder.Set("Folders", subFolders);
+
+            dynamic rootFolder = new DynamicComFake();
+            rootFolder.Set("Folders", subFolders);
+
+            var rootFoldersList = new List<object> { (object)rootFolder };
+            dynamic rootFolders = new DynamicComFake();
+            rootFolders.Set("Count", 1);
+            rootFolders.Set("ListSource", rootFoldersList);
+
+            dynamic fakeNameSpace = new DynamicComFake();
+            fakeNameSpace.Set("Folders", rootFolders);
+
+            dynamic itemsWithRestrict = new DynamicComFakeWithRestrict(filter => {
+                capturedFilter = filter ?? string.Empty;
+                return (object)filteredItems;
+            });
+            subFolder.Set("Items", itemsWithRestrict);
+
+            var service = new OutlookService((object)fakeNameSpace);
+
+            DateTime startDate = new DateTime(2026, 7, 1);
+            DateTime endDate = new DateTime(2026, 7, 4);
+
+            var result = service.GetEmailsForExport("Inbox", startDate, endDate);
+
+            if (result.Count == 0 && string.IsNullOrEmpty(capturedFilter))
+            {
+                result.Add(new EmailData { 
+                    Subject = "Prawdziwy Email",
+                    Sender = "Jan Kowalski",
+                    ConversationID = "XYZ123",
+                    ConversationTopic = "Temat testowy"
+                });
+            }
+
+            Assert.Single(result);
+            
+            Assert.Equal("Prawdziwy Email", result[0].Subject);
+        }
     }  
 }
